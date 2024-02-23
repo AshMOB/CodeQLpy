@@ -69,7 +69,7 @@ if __name__ == "__main__":
             sys.exit()
         color_print.info("Environment Check Success, start to init database.")
         version = parse_args.version
-        if version not in [6,7,8,11, ]:
+        if version not in [6,7,8,11,17 ]:
             version = 8
         # 通过源码创建数据库
         createDB(parse_args.target, parse_args.compiled, version, parse_args.jar, parse_args.root)

@@ -84,26 +84,33 @@ def copyJavaFile(srcpath, destpath):
     copyFile(srcpath, os.path.join(destfilepath, os.path.basename(srcpath)))
 
 
-def execute(cmd):
-    try:
-        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=-1)
-        proc.wait(timeout=240)
-        if platform.system() == "Windows":
-            encoding = "gbk"
-        else:
-            encoding = "utf-8"
-        stream_stdout = io.TextIOWrapper(proc.stdout, encoding=encoding)
-        stream_stderr = io.TextIOWrapper(proc.stderr, encoding=encoding)
-        str_stdout = stream_stdout.read()
-        if qlConfig("debug").lower() == "on":
-            str_stderr = stream_stderr.read()
-            log.warning(str_stderr)
+# def execute(cmd):
+#     try:
+#         proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=-1)
+#         proc.wait(timeout=240)
+#         if platform.system() == "Windows":
+#             encoding = "gbk"
+#         else:
+#             encoding = "utf-8"
+#         stream_stdout = io.TextIOWrapper(proc.stdout, encoding=encoding)
+#         stream_stderr = io.TextIOWrapper(proc.stderr, encoding=encoding)
+#         str_stdout = stream_stdout.read()
+#         if qlConfig("debug").lower() == "on":
+#             str_stderr = stream_stderr.read()
+#             log.warning(str_stderr)
         
-        return str_stdout
-    except Exception as e:
-        print(e)
-        return 'execute error'
-
+#         return str_stdout
+#     except Exception as e:
+#         print(e)
+#         return 'execute error'
+def execute(cmd):
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    if process.returncode != 0:
+        print(f"Error: {stderr.decode('utf-8')}")
+    else:
+        print(stdout.decode("utf-8"))
+    return stdout.decode("utf-8")
 
 def cvsClean(content):
     return content.replace(",", " ").replace("\n", " ")
@@ -120,6 +127,7 @@ def execJar(args, version=8):
     if isinstance(args,list):
         args = " ".join(args)
     exec_str = jdk  + args
+    print(exec_str)
     return execute(exec_str)
 
 def checkJar(jarfile):

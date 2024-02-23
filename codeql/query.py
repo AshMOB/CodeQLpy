@@ -69,6 +69,6 @@ class Query(object):
         if type(database) == codeql.Database:
             database = database.path
         # Perform query and return results
-        options = ['-o', output, '-d', database]
+        options = ['-o', output, '-d', database,'--threads','0']
         self.run_command('run', options)
         return codeql.BQRS(output)

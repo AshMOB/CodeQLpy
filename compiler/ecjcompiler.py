@@ -195,14 +195,21 @@ def ecjcompileE(save_path, target_version):
             split_quote = ";"
         else:
             split_quote = ":"
-        jar_args += " -extdirs \"{}\"".format(split_quote.join(jar_path))
+        if target_version <9:
+            jar_args += " -extdirs \"{}\"".format(split_quote.join(jar_path))
+        else:
+            jar_args += " --module-path \"{}\"".format(split_quote.join(jar_path))
 
     if os.path.isdir(os.path.join(save_path, "classes")):
         jar_args += " -sourcepath " + os.path.join(save_path, "classes")
 
     ecj_absolute_path = pathlib.Path(ecj_path).resolve()
-    compile_cmd = qlConfig("jdk8") + " -jar {} {} -encoding UTF-8 -8 " \
-                  "-warn:none -proceedOnError -noExit @{}/file.txt".format(ecj_absolute_path, jar_args, save_path)
+    if target_version < 9:
+        compile_cmd = qlConfig("jdk8") + " -jar {} {} -encoding UTF-8 -{} " \
+                      "-warn:none -proceedOnError -noExit @{}/file.txt".format(ecj_absolute_path,jar_args, target_version, save_path)
+    else:
+        compile_cmd = qlConfig("jdk17") + " -jar {} {} -encoding UTF-8 -{} " \
+                      "-warn:none -proceedOnError -noExit @{}/file.txt".format(ecj_absolute_path,jar_args, target_version, save_path)
 
     return compile_cmd
 

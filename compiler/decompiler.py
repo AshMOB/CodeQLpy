@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -31,6 +32,16 @@ def javaDecompile(filepath, save_dir):
         execJar(args, 11)
 
     # 使用jd-cli.jar对代码进行反编译（默认）
+    elif qlConfig("decompile_type") == "procyon":
+        toolpath=qlConfig("procyon_decode_tool")
+        if not checkTool(toolpath):
+            return False
+
+        if not os.path.isdir(save_dir):
+            os.makedirs(save_dir)
+        # decompile_dir = qlConfig("decode_savedir")
+        args = f" -jar {toolpath} {filepath} -o {save_dir}"
+        execJar(args, 11)
     else:
         toolpath=qlConfig("jd_decode_tool")
         if not checkTool(toolpath):
